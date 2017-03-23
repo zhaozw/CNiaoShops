@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">CNiaoShops</string>
+    <string name="buy_now">立即购买</string>
+    <string name="tab_home">首页</string>
+    <string name="tab_hot">热卖</string>
+    <string name="tab_classification">分类</string>
+    <string name="tab_shopping_cart">购物车</string>
+    <string name="tab_me">我的</string>
+    <string name="network_connect_fail">网络连接失败</string>
+    <string name="no_more">暂无更多数据</string>
+</resources>
