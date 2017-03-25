@@ -3,6 +3,7 @@ package com.chhd.cniaoshops.global;
 import android.app.Application;
 import android.content.Context;
 
+import com.chhd.cniaoshops.bean.User;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.yanzhenjie.nohttp.NoHttp;
 
@@ -12,6 +13,7 @@ import com.yanzhenjie.nohttp.NoHttp;
 public class AppApplication extends Application implements Constant {
 
     public static Context context;
+    public static boolean isHotStart;
 
     @Override
     public void onCreate() {

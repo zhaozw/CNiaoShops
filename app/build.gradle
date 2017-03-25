@@ -52,6 +52,7 @@ dependencies {
     compile 'com.yanzhenjie.nohttp:nohttp:1.1.1'
     compile 'eu.davidea:flexible-adapter:5.0.0-rc1'
     compile 'eu.davidea:flipview:1.1.2'
+    compile 'com.airbnb.android:lottie:1.5.3'
     compile project(':material_refresh_layout')
     compile project(':toasty')
 }

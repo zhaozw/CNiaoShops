@@ -7,9 +7,9 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context=".activity.MainActivity">
+    tools:context=".ui.activity.MainActivity">
 
-    <com.chhd.cniaoshops.widget.CnToolbar
+    <com.chhd.cniaoshops.ui.widget.CnToolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
@@ -22,7 +22,7 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <com.chhd.cniaoshops.widget.FragmentTabHost
+    <com.chhd.cniaoshops.ui.widget.FragmentTabHost
         android:id="@android:id/tabhost"
         android:layout_width="match_parent"
         android:layout_height="55dp" />

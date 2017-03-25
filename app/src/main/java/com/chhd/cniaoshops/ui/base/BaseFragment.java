@@ -1,4 +1,4 @@
-package com.chhd.cniaoshops.base;
+package com.chhd.cniaoshops.ui.base;
 
 import android.support.v4.app.Fragment;
 

@@ -28,6 +28,8 @@ public abstract class OnResponse<T> implements OnResponseListener {
     public void onFailed(int what, Response response) {
         LoggerUtils.e(response);
         ToastyUtils.error(R.string.network_connect_fail);
+
+        onFail(what, response);
     }
 
     @Override
@@ -36,4 +38,8 @@ public abstract class OnResponse<T> implements OnResponseListener {
     }
 
     public abstract void onSuccess(int what, Response<T> response);
+
+    public void onFail(int what, Response<T> response) {
+
+    }
 }

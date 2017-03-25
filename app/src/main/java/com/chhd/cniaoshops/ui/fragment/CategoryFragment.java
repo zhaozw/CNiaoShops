@@ -1,4 +1,4 @@
-package com.chhd.cniaoshops.fragment;
+package com.chhd.cniaoshops.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,13 +11,13 @@ import android.widget.TextView;
 /**
  * Created by CWQ on 2016/10/24.
  */
-public class CartFragment extends Fragment {
+public class CategoryFragment extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         TextView textView = new TextView(getActivity());
-        textView.setText("购物车");
+        textView.setText("热卖");
         return textView;
     }
 }

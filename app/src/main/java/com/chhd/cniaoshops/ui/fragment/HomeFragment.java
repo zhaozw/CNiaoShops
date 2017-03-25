@@ -1,23 +1,24 @@
-package com.chhd.cniaoshops.fragment;
+package com.chhd.cniaoshops.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.chhd.cniaoshops.R;
-import com.chhd.cniaoshops.adapter.HomeCategoryAdapter;
-import com.chhd.cniaoshops.base.BaseFragment;
+import com.chhd.cniaoshops.ui.adapter.HomeCategoryAdapter;
+import com.chhd.cniaoshops.ui.base.BaseFragment;
 import com.chhd.cniaoshops.bean.Banner;
 import com.chhd.cniaoshops.bean.HomeCampaign;
 import com.chhd.cniaoshops.bean.HomeCategory;
-import com.chhd.cniaoshops.clazz.SpaceItemDecoration;
-import com.chhd.cniaoshops.global.Constant;
+import com.chhd.cniaoshops.ui.SpaceItemDecoration;
 import com.chhd.cniaoshops.http.BaseCallback;
 import com.chhd.cniaoshops.http.OkHttpHelper;
 import com.chhd.cniaoshops.util.LoggerUtils;
@@ -64,6 +65,7 @@ public class HomeFragment extends BaseFragment {
     private List<HomeCampaign> campaigns = new ArrayList<>();
     private HomeCategoryAdapter adapter;
     private HomeFragment instance = this;
+    private TextView empty;
 
     @Nullable
     @Override
@@ -129,6 +131,7 @@ public class HomeFragment extends BaseFragment {
                         if (swipeRefreshLayout.isRefreshing()) {
                             swipeRefreshLayout.setRefreshing(false);
                         }
+                        adapter.setEmptyView(empty);
                     }
                 });
 
@@ -188,11 +191,16 @@ public class HomeFragment extends BaseFragment {
 
     private void initRecyclerView() {
 
-        View empty = LayoutInflater.from(getActivity()).inflate(R.layout.view_empty, (ViewGroup) recyclerView.getParent(), false);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UiUtils.dp2px(40));
+        empty = new TextView(getActivity());
+        empty.setLayoutParams(params);
+        empty.setText(R.string.no_more);
+        empty.setGravity(Gravity.CENTER);
+        empty.setTextColor(UiUtils.getColor(R.color.def_text_light));
+        empty.setTextSize(TypedValue.COMPLEX_UNIT_SP, UiUtils.getTextSize(R.dimen.text_size_small));
 
         adapter = new HomeCategoryAdapter(campaigns);
         adapter.addHeaderView(header);
-        adapter.setEmptyView(empty);
         adapter.setHeaderAndEmpty(true);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

@@ -1,4 +1,4 @@
-package com.chhd.cniaoshops.activity;
+package com.chhd.cniaoshops.ui.activity;
 
 import android.content.Context;
 import android.os.Build;
@@ -11,14 +11,14 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.chhd.cniaoshops.R;
-import com.chhd.cniaoshops.base.BaseActivity;
-import com.chhd.cniaoshops.base.HideSoftInputActivity;
+import com.chhd.cniaoshops.ui.base.HideSoftInputActivity;
 import com.chhd.cniaoshops.bean.Tab;
-import com.chhd.cniaoshops.fragment.CategoryFragment;
-import com.chhd.cniaoshops.fragment.HomeFragment;
-import com.chhd.cniaoshops.fragment.HotFragment;
-import com.chhd.cniaoshops.fragment.MineFragment;
-import com.chhd.cniaoshops.widget.FragmentTabHost;
+import com.chhd.cniaoshops.ui.fragment.CategoryFragment;
+import com.chhd.cniaoshops.ui.fragment.HomeFragment;
+import com.chhd.cniaoshops.ui.fragment.HotFragment;
+import com.chhd.cniaoshops.ui.fragment.MineFragment;
+import com.chhd.cniaoshops.global.AppApplication;
+import com.chhd.cniaoshops.ui.widget.FragmentTabHost;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +44,8 @@ public class MainActivity extends HideSoftInputActivity {
         ButterKnife.bind(this);
 
         context = this;
+
+        AppApplication.isHotStart = true;
 
         initTab();
     }

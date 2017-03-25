@@ -1,8 +1,7 @@
-package com.chhd.cniaoshops.base;
+package com.chhd.cniaoshops.ui.base;
 
 import android.content.Context;
 import android.os.IBinder;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;

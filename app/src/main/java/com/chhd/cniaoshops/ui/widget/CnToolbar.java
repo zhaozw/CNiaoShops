@@ -1,4 +1,4 @@
-package com.chhd.cniaoshops.widget;
+package com.chhd.cniaoshops.ui.widget;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

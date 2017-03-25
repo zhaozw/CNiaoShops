@@ -1,9 +1,7 @@
-package com.chhd.cniaoshops.adapter;
+package com.chhd.cniaoshops.ui.adapter;
 
-import android.content.Context;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chhd.cniaoshops.R;

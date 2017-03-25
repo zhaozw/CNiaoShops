@@ -1,4 +1,4 @@
-package com.chhd.cniaoshops.clazz;
+package com.chhd.cniaoshops.ui;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;

@@ -9,6 +9,11 @@
         <item name="android:windowBackground">@color/white</item>
     </style>
 
+
+    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <style name="SearchView">
         <item name="android:textSize">@dimen/text_size_normal</item>
         <item name="android:textColor">@color/white</item>

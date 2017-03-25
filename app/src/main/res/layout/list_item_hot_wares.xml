@@ -23,8 +23,8 @@
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/iv_pic"
                     android:layout_width="120dp"
+                    app:placeholderImage="@drawable/empty_photo"
                     android:layout_height="100dp"
-                    android:background="@drawable/empty_photo"
                     android:scaleType="centerCrop" />
 
                 <LinearLayout

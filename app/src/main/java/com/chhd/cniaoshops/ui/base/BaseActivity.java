@@ -1,18 +1,10 @@
-package com.chhd.cniaoshops.base;
+package com.chhd.cniaoshops.ui.base;
 
 import android.app.Activity;
-import android.content.Context;
-import android.os.Handler;
-import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 
 import com.chhd.cniaoshops.global.Constant;
-import com.chhd.cniaoshops.util.LoggerUtils;
 
 import java.util.ArrayList;
 import java.util.List;

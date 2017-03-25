@@ -2,6 +2,7 @@ package com.chhd.cniaoshops.util;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.TypedValue;
 import android.view.View;
 
 import com.chhd.cniaoshops.global.AppApplication;
@@ -16,10 +17,6 @@ public class UiUtils {
 
     public static Context getContext() {
         return AppApplication.context;
-    }
-
-    public static View inflate(int resource) {
-        return View.inflate(getContext(), resource, null);
     }
 
     public static Resources getResources() {
@@ -46,5 +43,11 @@ public class UiUtils {
 
     public static int getColor(int id) {
         return getResources().getColor(id);
+    }
+
+    public static int getTextSize(int id) {
+        TypedValue value = new TypedValue();
+        UiUtils.getResources().getValue(id, value, true);
+        return (int) TypedValue.complexToFloat(value.data);
     }
 }

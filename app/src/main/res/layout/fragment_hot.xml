@@ -1,21 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/def_background"
     android:orientation="vertical">
 
-    <com.cjj.MaterialRefreshLayout
-        android:id="@+id/refresh_layout"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <com.cjj.MaterialRefreshLayout
+            android:id="@+id/refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
 
-    </com.cjj.MaterialRefreshLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbarSize="3dp"
+                android:scrollbarStyle="outsideOverlay"
+                android:scrollbarThumbVertical="@drawable/scrollbar_vertical_thumb"
+                android:scrollbars="vertical" />
+
+        </com.cjj.MaterialRefreshLayout>
+
+        <include
+            android:id="@+id/empty_view"
+            layout="@layout/view_empty"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
 
 </LinearLayout>

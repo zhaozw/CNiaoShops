@@ -1,21 +1,24 @@
-package com.chhd.cniaoshops.fragment;
+package com.chhd.cniaoshops.ui.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.chhd.cniaoshops.R;
-import com.chhd.cniaoshops.adapter.HotWaresAdapter;
-import com.chhd.cniaoshops.base.BaseFragment;
+import com.chhd.cniaoshops.ui.adapter.HotWaresAdapter;
+import com.chhd.cniaoshops.ui.base.BaseFragment;
 import com.chhd.cniaoshops.bean.Page;
 import com.chhd.cniaoshops.bean.Wares;
-import com.chhd.cniaoshops.clazz.SpaceItemDecoration;
+import com.chhd.cniaoshops.ui.SpaceItemDecoration;
 import com.chhd.cniaoshops.http.OnResponse;
 import com.chhd.cniaoshops.items.HotWaresItem;
+import com.chhd.cniaoshops.items.ProgressItem;
 import com.chhd.cniaoshops.util.LoggerUtils;
 import com.chhd.cniaoshops.util.UiUtils;
 import com.cjj.MaterialRefreshLayout;
@@ -46,6 +49,8 @@ public class HotFragment extends BaseFragment {
     MaterialRefreshLayout refreshLayout;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+    @BindView(R.id.empty_view)
+    LinearLayout emptyView;
 
     private List<AbstractFlexibleItem> items = new ArrayList<>();
     private HotWaresAdapter adatper;
@@ -53,22 +58,24 @@ public class HotFragment extends BaseFragment {
     private int totalPage = 1;
     private int pageSize = 10;
     private StatusEnum state = StatusEnum.STATE_NORMAL;
+    private ProgressItem progressItem;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = UiUtils.inflate(R.layout.fragment_hot);
+        View view = View.inflate(getActivity(), R.layout.fragment_hot, null);
 
         ButterKnife.bind(this, view);
 
         refreshLayout.setSunStyle(true);
         refreshLayout.setMaterialRefreshListener(materialRefreshListener);
         refreshLayout.autoRefresh();
-        refreshLayout.setLoadMore(true);
         refreshLayout.setProgressColors(getProgressColors());
 
         adatper = new HotWaresAdapter(items);
+        progressItem = new ProgressItem(getActivity(), adatper);
+        adatper.setEndlessScrollListener(endlessScrollListener, progressItem);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adatper);
@@ -92,17 +99,17 @@ public class HotFragment extends BaseFragment {
 
         @Override
         public void noMoreLoad(int newItemsSize) {
-
         }
 
         @Override
         public void onLoadMore(int lastPosition, int currentPage) {
-
+            progressItem.setStatus(ProgressItem.StatusEnum.ON_LOAD);
+            loadMoreData();
         }
     };
 
 
-    MaterialRefreshListener materialRefreshListener = new MaterialRefreshListener() {
+    private MaterialRefreshListener materialRefreshListener = new MaterialRefreshListener() {
 
         @Override
         public void onRefresh(MaterialRefreshLayout materialRefreshLayout) {
@@ -112,7 +119,11 @@ public class HotFragment extends BaseFragment {
         @Override
         public void onRefreshLoadMore(MaterialRefreshLayout materialRefreshLayout) {
             super.onRefreshLoadMore(materialRefreshLayout);
-
+            if (curPage <= totalPage) {
+                loadMoreData();
+            } else {
+                refreshLayout.finishRefreshLoadMore();
+            }
         }
     };
 
@@ -150,7 +161,9 @@ public class HotFragment extends BaseFragment {
                     Page<Wares> page = new Gson().fromJson(response.get(), type);
 
                     curPage = page.getCurrentPage();
-                    totalPage =page.getTotalPage();
+                    totalPage = page.getTotalPage();
+
+                    showData(page);
 
                 } catch (Exception e) {
                     LoggerUtils.e(e);
@@ -158,30 +171,98 @@ public class HotFragment extends BaseFragment {
             }
 
             @Override
+            public void onFail(int what, Response<String> response) {
+
+                fail();
+            }
+
+            @Override
             public void onFinish(int what) {
                 super.onFinish(what);
+                finishRefresh();
 
-                refreshLayout.finishRefresh();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        int visibility = items.size() == 0 ? View.VISIBLE : View.INVISIBLE;
+                        emptyView.setVisibility(visibility);
+                    }
+                }, delayMillis);
+
+                progressItem.setStatus(ProgressItem.StatusEnum.ON_ERROR);
             }
         });
 
     }
 
-    private void showData(Page<Wares> page) {
+    private void finishRefresh() {
         switch (state) {
             case STATE_NORMAL:
+                refreshLayout.finishRefresh();
+                break;
+            case STATE_LOADMORE:
+                refreshLayout.finishRefreshLoadMore();
+                break;
+        }
+    }
+
+    private void fail() {
+
+        switch (state) {
+            case STATE_NORMAL:
+
+                break;
+            case STATE_LOADMORE:
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressItem.setStatus(ProgressItem.StatusEnum.ON_ERROR);
+                    }
+                }, 500);
+                break;
+        }
+
+    }
+
+    private void showData(Page<Wares> page) {
+        switch (state) {
+            case STATE_NORMAL: {
                 items.clear();
-                List<Wares> list = page.getList();
-                for (Wares wares : list) {
+                for (Wares wares : page.getList()) {
                     HotWaresItem item = new HotWaresItem(getActivity(), wares);
                     items.add(item);
                 }
-                break;
-            case STATE_LOADMORE:
+                adatper.notifyDataSetChanged();
+            }
+            break;
+            case STATE_LOADMORE: {
+                final List<AbstractFlexibleItem> newItems = new ArrayList<>();
+                for (Wares wares : page.getList()) {
+                    HotWaresItem item = new HotWaresItem(getActivity(), wares);
+                    newItems.add(item);
+                }
 
-                break;
+                if (newItems.size() == 0) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressItem.setStatus(ProgressItem.StatusEnum.ON_FINISH);
+                            adatper.onLoadMoreComplete(newItems, 2000);
+                        }
+                    }, 500);
+                } else {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            adatper.onLoadMoreComplete(newItems);
+                        }
+                    }, 500);
+                }
+
+            }
+            break;
         }
-        adatper.notifyDataSetChanged();
+
     }
 
     enum StatusEnum {

@@ -1,4 +1,4 @@
-package com.chhd.cniaoshops.clazz;
+package com.chhd.cniaoshops.ui;
 
 import android.content.Context;
 

@@ -1,6 +1,7 @@
 package com.chhd.cniaoshops.items;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 
 import com.chhd.cniaoshops.R;
 import com.chhd.cniaoshops.bean.Wares;
+import com.chhd.cniaoshops.util.LoggerUtils;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
@@ -57,7 +60,7 @@ public class HotWaresItem extends AbstractFlexibleItem<HotWaresItem.Holder> {
 
     @Override
     public void bindViewHolder(FlexibleAdapter adapter, Holder holder, int position, List payloads) {
-
+        holder.ivPic.setImageURI(Uri.parse(wares.getImgUrl()));
         holder.tvTitle.setText(wares.getName());
         holder.tvPrice.setText("" + wares.getPrice());
     }
@@ -65,7 +68,7 @@ public class HotWaresItem extends AbstractFlexibleItem<HotWaresItem.Holder> {
     static final class Holder extends FlexibleViewHolder {
 
         @BindView(R.id.iv_pic)
-        ImageView ivPic;
+        SimpleDraweeView ivPic;
         @BindView(R.id.tv_title)
         TextView tvTitle;
         @BindView(R.id.tv_price)
