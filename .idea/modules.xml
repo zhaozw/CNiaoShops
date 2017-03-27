@@ -4,7 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/CNiaoShops.iml" filepath="$PROJECT_DIR$/CNiaoShops.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/image_slider/image_slider.iml" filepath="$PROJECT_DIR$/image_slider/image_slider.iml" />
       <module fileurl="file://$PROJECT_DIR$/material_refresh_layout/material_refresh_layout.iml" filepath="$PROJECT_DIR$/material_refresh_layout/material_refresh_layout.iml" />
+      <module fileurl="file://$PROJECT_DIR$/per_library/per_library.iml" filepath="$PROJECT_DIR$/per_library/per_library.iml" />
       <module fileurl="file://$PROJECT_DIR$/toasty/toasty.iml" filepath="$PROJECT_DIR$/toasty/toasty.iml" />
     </modules>
   </component>

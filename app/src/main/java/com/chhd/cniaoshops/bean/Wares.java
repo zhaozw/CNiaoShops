@@ -16,7 +16,6 @@ public class Wares {
 
     private Float price;
 
-
     public Long getId() {
         return id;
     }

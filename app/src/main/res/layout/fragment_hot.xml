@@ -16,14 +16,13 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view"
+                style="@style/HorizontalRecyclerStyle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbarSize="3dp"
-                android:scrollbarStyle="outsideOverlay"
-                android:scrollbarThumbVertical="@drawable/scrollbar_vertical_thumb"
-                android:scrollbars="vertical" />
+                android:layout_height="match_parent" />
 
         </com.cjj.MaterialRefreshLayout>
+
+        <include layout="@layout/view_fast_scroller" />
 
         <include
             android:id="@+id/empty_view"

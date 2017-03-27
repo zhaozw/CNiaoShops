@@ -1,18 +1,15 @@
-package com.chhd.cniaoshops.items;
+package com.chhd.cniaoshops.ui.items;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chhd.cniaoshops.R;
 import com.chhd.cniaoshops.bean.Wares;
-import com.chhd.cniaoshops.util.LoggerUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;

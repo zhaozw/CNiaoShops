@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/def_background"
@@ -12,11 +12,12 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
+            style="@style/HorizontalRecyclerStyle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+            android:layout_height="match_parent" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
 
-</LinearLayout>
+
+</RelativeLayout>

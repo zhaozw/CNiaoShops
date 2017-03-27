@@ -5,28 +5,26 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
 import com.chhd.cniaoshops.R;
+import com.chhd.cniaoshops.biz.BannerBiz;
 import com.chhd.cniaoshops.ui.adapter.HomeCategoryAdapter;
 import com.chhd.cniaoshops.ui.base.BaseFragment;
 import com.chhd.cniaoshops.bean.Banner;
 import com.chhd.cniaoshops.bean.HomeCampaign;
 import com.chhd.cniaoshops.bean.HomeCategory;
-import com.chhd.cniaoshops.ui.SpaceItemDecoration;
-import com.chhd.cniaoshops.http.BaseCallback;
-import com.chhd.cniaoshops.http.OkHttpHelper;
+import com.chhd.cniaoshops.http.lvan.BaseCallback;
+import com.chhd.cniaoshops.http.lvan.OkHttpHelper;
+import com.chhd.cniaoshops.ui.decoration.SpaceItemDecoration;
 import com.chhd.cniaoshops.util.LoggerUtils;
 import com.chhd.cniaoshops.util.UiUtils;
 import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
-import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -56,16 +54,14 @@ public class HomeFragment extends BaseFragment {
     RecyclerView recyclerView;
 
     private View header;
-    private SliderLayout sliderLayout;
-    private PagerIndicator pagerIndicator;
 
     private List<HomeCategory> data = new ArrayList<>();
     private List<Banner> banners = new ArrayList<>();
-    private int placeholderResId = R.drawable.empty_photo;
     private List<HomeCampaign> campaigns = new ArrayList<>();
     private HomeCategoryAdapter adapter;
     private HomeFragment instance = this;
-    private TextView empty;
+    private View empty;
+    private SliderLayout sliderLayout;
 
     @Nullable
     @Override
@@ -131,13 +127,22 @@ public class HomeFragment extends BaseFragment {
                         if (swipeRefreshLayout.isRefreshing()) {
                             swipeRefreshLayout.setRefreshing(false);
                         }
-                        adapter.setEmptyView(empty);
+
+                        setEmptyView();
                     }
                 });
 
-
     }
 
+    private void setEmptyView() {
+        if (adapter.getEmptyView() == null) {
+            int height = recyclerView.getHeight() - adapter.getHeaderLayout().getHeight() - UiUtils.getStatusBarHeight();
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
+            View emptyView = View.inflate(getActivity(), R.layout.view_empty, null);
+            emptyView.setLayoutParams(params);
+            adapter.setEmptyView(emptyView);
+        }
+    }
 
     private void requestBannerImages() {
 
@@ -191,14 +196,6 @@ public class HomeFragment extends BaseFragment {
 
     private void initRecyclerView() {
 
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UiUtils.dp2px(40));
-        empty = new TextView(getActivity());
-        empty.setLayoutParams(params);
-        empty.setText(R.string.no_more);
-        empty.setGravity(Gravity.CENTER);
-        empty.setTextColor(UiUtils.getColor(R.color.def_text_light));
-        empty.setTextSize(TypedValue.COMPLEX_UNIT_SP, UiUtils.getTextSize(R.dimen.text_size_small));
-
         adapter = new HomeCategoryAdapter(campaigns);
         adapter.addHeaderView(header);
         adapter.setHeaderAndEmpty(true);
@@ -228,25 +225,26 @@ public class HomeFragment extends BaseFragment {
 
     private void initSliderLayout() {
 
-        header = View.inflate(getActivity(), R.layout.header_home, null);
+        header = View.inflate(getActivity(), R.layout.header_banner, null);
         sliderLayout = ButterKnife.findById(header, R.id.slider_layout);
-        pagerIndicator = ButterKnife.findById(header, R.id.pager_indicator);
 
+        View indicators = View.inflate(getActivity(), R.layout.indicators_bird, null);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, UiUtils.dp2px(BANNER_DESCRIPTION_LAYOUT_HEIGHT));
+        params.alignWithParent = true;
+        params.rightMargin = UiUtils.dp2px(10);
+        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        ((RelativeLayout) header).addView(indicators, params);
+        PagerIndicator pagerIndicator = ButterKnife.findById(header, R.id.pager_indicator);
         sliderLayout.setCustomIndicator(pagerIndicator);
+
         sliderLayout.startAutoCycle(5000, 5000, true);
 
-        String[] imgUrls = UiUtils.getStringArray(R.array.banner_img_urls);
-        String[] titles = UiUtils.getStringArray(R.array.banner_titles);
-
-        for (int i = 0; i < imgUrls.length; i++) {
-            TextSliderView sliderView = new TextSliderView(getActivity());
-            sliderView.image(imgUrls[i]);
-            sliderView.description(titles[i]);
-            sliderView.setScaleType(BaseSliderView.ScaleType.CenterCrop);
-            sliderView.empty(placeholderResId);
-            sliderView.error(placeholderResId);
-            sliderLayout.addSlider(sliderView);
+        List<BaseSliderView> banners = new BannerBiz(getActivity()).getBanner();
+        for (BaseSliderView bannser : banners) {
+            sliderLayout.addSlider(bannser);
         }
+
     }
 
     @Override

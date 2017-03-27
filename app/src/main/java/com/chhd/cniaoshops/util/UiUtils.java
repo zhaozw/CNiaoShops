@@ -47,7 +47,19 @@ public class UiUtils {
 
     public static int getTextSize(int id) {
         TypedValue value = new TypedValue();
-        UiUtils.getResources().getValue(id, value, true);
+        getResources().getValue(id, value, true);
         return (int) TypedValue.complexToFloat(value.data);
+    }
+
+    public static int getStatusBarHeight() {
+
+        int statusBarHeight = -1;
+        //获取status_bar_height资源的ID
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            //根据资源ID获取响应的尺寸值
+            statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+        }
+        return statusBarHeight;
     }
 }

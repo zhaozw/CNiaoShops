@@ -11,14 +11,14 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.chhd.cniaoshops.R;
-import com.chhd.cniaoshops.ui.adapter.HotWaresAdapter;
-import com.chhd.cniaoshops.ui.base.BaseFragment;
 import com.chhd.cniaoshops.bean.Page;
 import com.chhd.cniaoshops.bean.Wares;
-import com.chhd.cniaoshops.ui.SpaceItemDecoration;
 import com.chhd.cniaoshops.http.OnResponse;
-import com.chhd.cniaoshops.items.HotWaresItem;
-import com.chhd.cniaoshops.items.ProgressItem;
+import com.chhd.cniaoshops.ui.decoration.SpaceItemDecoration;
+import com.chhd.cniaoshops.ui.adapter.HotWaresAdapter;
+import com.chhd.cniaoshops.ui.base.BaseFragment;
+import com.chhd.cniaoshops.ui.items.HotWaresItem;
+import com.chhd.cniaoshops.ui.items.ProgressItem;
 import com.chhd.cniaoshops.util.LoggerUtils;
 import com.chhd.cniaoshops.util.UiUtils;
 import com.cjj.MaterialRefreshLayout;
@@ -37,6 +37,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import eu.davidea.fastscroller.FastScroller;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 
@@ -49,6 +50,8 @@ public class HotFragment extends BaseFragment {
     MaterialRefreshLayout refreshLayout;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+    @BindView(R.id.fast_scroller)
+    FastScroller fastScroller;
     @BindView(R.id.empty_view)
     LinearLayout emptyView;
 
@@ -74,15 +77,26 @@ public class HotFragment extends BaseFragment {
         refreshLayout.setProgressColors(getProgressColors());
 
         adatper = new HotWaresAdapter(items);
-        progressItem = new ProgressItem(getActivity(), adatper);
+        progressItem = new ProgressItem(adatper, onClickListener);
         adatper.setEndlessScrollListener(endlessScrollListener, progressItem);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adatper);
         recyclerView.addItemDecoration(new SpaceItemDecoration(UiUtils.dp2px(10), true));
 
+        adatper.setFastScroller(fastScroller, UiUtils.getColor(R.color.colorAccent));//Setup FastScroller after the Adapter has been added to the RecyclerView.
+//        adatper.toggleFastScroller();
+
         return view;
     }
+
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            progressItem.setStatus(ProgressItem.StatusEnum.ON_LOAD);
+            loadMoreData();
+        }
+    };
 
     private int[] getProgressColors() {
 
@@ -134,7 +148,6 @@ public class HotFragment extends BaseFragment {
     }
 
     private void loadMoreData() {
-        curPage = ++curPage;
         state = StatusEnum.STATE_LOADMORE;
         requestGetData();
     }
@@ -151,7 +164,6 @@ public class HotFragment extends BaseFragment {
         RequestQueue queue = NoHttp.newRequestQueue();
         queue.add(0, request, new OnResponse<String>() {
 
-
             @Override
             public void onSuccess(int what, Response<String> response) {
                 try {
@@ -162,6 +174,8 @@ public class HotFragment extends BaseFragment {
 
                     curPage = page.getCurrentPage();
                     totalPage = page.getTotalPage();
+
+                    curPage = ++curPage;
 
                     showData(page);
 
@@ -189,7 +203,6 @@ public class HotFragment extends BaseFragment {
                     }
                 }, delayMillis);
 
-                progressItem.setStatus(ProgressItem.StatusEnum.ON_ERROR);
             }
         });
 

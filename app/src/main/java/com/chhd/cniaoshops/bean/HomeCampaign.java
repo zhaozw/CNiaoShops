@@ -8,7 +8,7 @@ import java.io.Serializable;
  * Created by CWQ on 2017/3/7.
  */
 
-public class HomeCampaign implements MultiItemEntity, Serializable {
+public class HomeCampaign implements MultiItemEntity, Serializable {//Campaign 活动
 
     private Long id;
 

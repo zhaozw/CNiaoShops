@@ -1,5 +1,6 @@
 package com.chhd.cniaoshops.ui.adapter;
 
+import android.view.View;
 import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
@@ -7,6 +8,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.chhd.cniaoshops.R;
 import com.chhd.cniaoshops.bean.HomeCampaign;
 import com.chhd.cniaoshops.bean.HomeCategory;
+import com.chhd.cniaoshops.ui.base.SimpleMultiItemAdapter;
 import com.chhd.cniaoshops.util.LoggerUtils;
 import com.squareup.picasso.Picasso;
 
@@ -16,7 +18,7 @@ import java.util.List;
  * Created by CWQ on 2016/11/16.
  */
 
-public class HomeCategoryAdapter extends BaseMultiItemQuickAdapter<HomeCampaign, BaseViewHolder> {
+public class HomeCategoryAdapter extends SimpleMultiItemAdapter<HomeCampaign, BaseViewHolder> {
 
     public HomeCategoryAdapter(List<HomeCampaign> data) {
         super(data);
@@ -52,5 +54,7 @@ public class HomeCategoryAdapter extends BaseMultiItemQuickAdapter<HomeCampaign,
         } catch (Exception e) {
             LoggerUtils.e(e);
         }
+
     }
+
 }

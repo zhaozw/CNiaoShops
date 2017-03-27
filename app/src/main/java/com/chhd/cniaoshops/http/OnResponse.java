@@ -10,7 +10,7 @@ import com.yanzhenjie.nohttp.rest.Response;
  * Created by CWQ on 2017/3/21.
  */
 
-public abstract class OnResponse<T> implements OnResponseListener {
+public abstract class OnResponse<T> implements OnResponseListener<T> {
 
     @Override
     public void onStart(int what) {
@@ -20,7 +20,6 @@ public abstract class OnResponse<T> implements OnResponseListener {
     @Override
     public void onSucceed(int what, Response response) {
         LoggerUtils.d(response);
-
         onSuccess(what, response);
     }
 
@@ -28,7 +27,6 @@ public abstract class OnResponse<T> implements OnResponseListener {
     public void onFailed(int what, Response response) {
         LoggerUtils.e(response);
         ToastyUtils.error(R.string.network_connect_fail);
-
         onFail(what, response);
     }
 
@@ -40,6 +38,5 @@ public abstract class OnResponse<T> implements OnResponseListener {
     public abstract void onSuccess(int what, Response<T> response);
 
     public void onFail(int what, Response<T> response) {
-
     }
 }

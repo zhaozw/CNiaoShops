@@ -1,4 +1,4 @@
-package com.chhd.cniaoshops.items;
+package com.chhd.cniaoshops.ui.items;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,14 +8,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.chhd.cniaoshops.R;
-import com.chhd.cniaoshops.util.LoggerUtils;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
-import eu.davidea.flexibleadapter.Payload;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 import eu.davidea.viewholders.FlexibleViewHolder;
 
@@ -28,17 +26,18 @@ public class ProgressItem extends AbstractFlexibleItem<ProgressItem.Holder> {
     private StatusEnum status = StatusEnum.ON_LOAD;
     private Context context;
     private FlexibleAdapter adapter;
+    private View.OnClickListener onClickListener;
 
     public ProgressItem() {
     }
 
-    public ProgressItem(Context context) {
-        this.context = context;
+    public ProgressItem(FlexibleAdapter adapter) {
+        this.adapter = adapter;
     }
 
-    public ProgressItem(Context context, FlexibleAdapter adapter) {
-        this.context = context;
+    public ProgressItem(FlexibleAdapter adapter, View.OnClickListener onClickListener) {
         this.adapter = adapter;
+        this.onClickListener = onClickListener;
     }
 
     public StatusEnum getStatus() {
@@ -88,7 +87,7 @@ public class ProgressItem extends AbstractFlexibleItem<ProgressItem.Holder> {
         }
     }
 
-    static final class Holder extends FlexibleViewHolder {
+    final class Holder extends FlexibleViewHolder {
 
         @BindView(R.id.progress_bar)
         ProgressBar progressBar;
@@ -101,6 +100,14 @@ public class ProgressItem extends AbstractFlexibleItem<ProgressItem.Holder> {
             super(view, adapter);
 
             ButterKnife.bind(this, view);
+
+            tvFail.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            super.onClick(view);
+            onClickListener.onClick(view);
         }
     }
 

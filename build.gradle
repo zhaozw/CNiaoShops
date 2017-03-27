@@ -17,8 +17,18 @@ allprojects {
         jcenter()
         mavenCentral()
         maven { url "https://jitpack.io" }
-        maven {url = "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
+}
+
+ext {
+    compileSdkVersion = 25
+    buildToolsVersion = '25.0.0'
+    minSdkVersion = 15
+    targetSdkVersion = 23
+    supportLibsVersion = '25.0.0'
+    butterknifeLibsVersion = '8.4.0'
+    picassoLibsVersion = '2.5.2'
 }
 
 task clean(type: Delete) {
