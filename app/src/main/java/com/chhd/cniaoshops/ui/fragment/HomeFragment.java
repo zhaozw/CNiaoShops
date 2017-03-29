@@ -1,6 +1,7 @@
 package com.chhd.cniaoshops.ui.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,37 +12,32 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.chhd.cniaoshops.R;
-import com.chhd.cniaoshops.biz.BannerBiz;
-import com.chhd.cniaoshops.ui.adapter.HomeCategoryAdapter;
-import com.chhd.cniaoshops.ui.base.BaseFragment;
 import com.chhd.cniaoshops.bean.Banner;
 import com.chhd.cniaoshops.bean.HomeCampaign;
 import com.chhd.cniaoshops.bean.HomeCategory;
-import com.chhd.cniaoshops.http.lvan.BaseCallback;
-import com.chhd.cniaoshops.http.lvan.OkHttpHelper;
+import com.chhd.cniaoshops.biz.BannerBiz;
+import com.chhd.cniaoshops.http.OnResponse;
+import com.chhd.cniaoshops.ui.adapter.HomeCategoryAdapter;
+import com.chhd.cniaoshops.ui.base.BaseFragment;
 import com.chhd.cniaoshops.ui.decoration.SpaceItemDecoration;
-import com.chhd.cniaoshops.util.LoggerUtils;
 import com.chhd.cniaoshops.util.UiUtils;
 import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.yanzhenjie.nohttp.NoHttp;
+import com.yanzhenjie.nohttp.RequestMethod;
+import com.yanzhenjie.nohttp.rest.Request;
+import com.yanzhenjie.nohttp.rest.RequestQueue;
+import com.yanzhenjie.nohttp.rest.Response;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * Created by CWQ on 2016/10/24.
@@ -73,7 +69,7 @@ public class HomeFragment extends BaseFragment {
 
         initView();
 
-        requestHomeCampaign();
+        refresh();
 
         return view;
     }
@@ -82,103 +78,77 @@ public class HomeFragment extends BaseFragment {
 
         String url = SERVER_URL + "campaign/recommend";
 
-        OkHttpHelper
-                .getInstance()
-                .get(url, new BaseCallback<List<HomeCampaign>>() {
+        Request<String> request = NoHttp.createStringRequest(url, RequestMethod.POST);
 
-                    @Override
-                    public void onBeforeRequest(Request request) {
-
-                    }
-
-                    @Override
-                    public void onFailure(Request request, Exception e) {
-                        LoggerUtils.e(e);
-                    }
-
-                    @Override
-                    public void onResponse(Response response) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(Response response, List<HomeCampaign> homeCampaigns) {
-                        if (!homeCampaigns.isEmpty()) {
-                            for (int i = 0; i < homeCampaigns.size(); i++) {
-                                if (i % 2 == 0) {
-                                    homeCampaigns.get(i).setItemType(HomeCategory.TYPE_RIGHT);
-                                } else {
-                                    homeCampaigns.get(i).setItemType(HomeCategory.TYPE_LEFT);
-                                }
-                            }
-                            instance.campaigns.clear();
-                            instance.campaigns.addAll(homeCampaigns);
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Response response, int code, Exception e) {
-                        LoggerUtils.e(e);
-                    }
-
-                    @Override
-                    public void onAfter(Response response, Exception e) {
-                        if (swipeRefreshLayout.isRefreshing()) {
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-
-                        setEmptyView();
-                    }
-                });
-
-    }
-
-    private void setEmptyView() {
-        if (adapter.getEmptyView() == null) {
-            int height = recyclerView.getHeight() - adapter.getHeaderLayout().getHeight() - UiUtils.getStatusBarHeight();
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
-            View emptyView = View.inflate(getActivity(), R.layout.view_empty, null);
-            emptyView.setLayoutParams(params);
-            adapter.setEmptyView(emptyView);
-        }
-    }
-
-    private void requestBannerImages() {
-
-        String url = "http://112.124.22.238:8081/course_api/banner/query";
-
-        OkHttpClient client = new OkHttpClient();
-
-        RequestBody body = new FormBody
-                .Builder()
-                .add("type", "1")
-                .build();
-
-        Request request = new Request
-                .Builder()
-                .url(url)
-                .post(body)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
+        RequestQueue queue = NoHttp.newRequestQueue();
+        queue.add(0, request, new OnResponse<String>() {
 
             @Override
-            public void onFailure(Call call, IOException e) {
-                LoggerUtils.e(e);
+            public void succeed(int what, Response<String> response) {
+                Type type = new TypeToken<List<HomeCampaign>>() {
+                }.getType();
+                List<HomeCampaign> list = new Gson().fromJson(response.get(), type);
+                showHomeCampaign(list);
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String json = response.body().string();
-                    Type type = new TypeToken<List<Banner>>() {
-                    }.getType();
-                    banners = new Gson().fromJson(json, type);
+            public void finish(int what) {
+                if (swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                    adapter.setCustomEmptyView(recyclerView);
                 }
             }
         });
     }
+
+    private void showHomeCampaign(List<HomeCampaign> homeCampaigns) {
+        for (int i = 0; i < homeCampaigns.size(); i++) {
+            if (i % 2 == 0) {
+                homeCampaigns.get(i).setItemType(HomeCategory.TYPE_RIGHT);
+            } else {
+                homeCampaigns.get(i).setItemType(HomeCategory.TYPE_LEFT);
+            }
+        }
+        instance.campaigns.clear();
+        instance.campaigns.addAll(homeCampaigns);
+        adapter.notifyDataSetChanged();
+    }
+
+//    private void requestBannerImages() {
+//
+//        String url = "http://112.124.22.238:8081/course_api/banner/query";
+//
+//        OkHttpClient client = new OkHttpClient();
+//
+//        RequestBody body = new FormBody
+//                .Builder()
+//                .add("type", "1")
+//                .build();
+//
+//        Request request = new Request
+//                .Builder()
+//                .url(url)
+//                .post(body)
+//                .build();
+//
+//        client.newCall(request).enqueue(new Callback() {
+//
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                LoggerUtils.e(e);
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                if (response.isSuccessful()) {
+//                    String json = response.body().string();
+//                    Type type = new TypeToken<List<Banner>>() {
+//                    }.getType();
+//                    banners = new Gson().fromJson(json, type);
+//                }
+//            }
+//        });
+//    }
 
     private void initView() {
 
@@ -191,14 +161,23 @@ public class HomeFragment extends BaseFragment {
 
     private void initSwipeRefreshLayout() {
         swipeRefreshLayout.setColorSchemeResources(SWIPE_REFRESH_LAYOUT_COLORS);
-        swipeRefreshLayout.setOnRefreshListener(new MyOnRefreshListener());
+        swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
+    }
+
+    private void refresh() {
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(true);
+                onRefreshListener.onRefresh();
+            }
+        });
     }
 
     private void initRecyclerView() {
 
         adapter = new HomeCategoryAdapter(campaigns);
         adapter.addHeaderView(header);
-        adapter.setHeaderAndEmpty(true);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
@@ -253,10 +232,10 @@ public class HomeFragment extends BaseFragment {
         sliderLayout.stopAutoCycle();
     }
 
-    private class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener {
+    private SwipeRefreshLayout.OnRefreshListener onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
             requestHomeCampaign();
         }
-    }
+    };
 }

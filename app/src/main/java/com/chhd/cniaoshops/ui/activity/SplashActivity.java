@@ -26,7 +26,7 @@ public class SplashActivity extends BaseActivity {
 
         ButterKnife.bind(this);
 
-        if (AppApplication.isHotStart) {
+        if (AppApplication.isHotRun) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();

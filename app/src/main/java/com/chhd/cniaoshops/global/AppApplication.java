@@ -7,6 +7,7 @@ import com.chhd.cniaoshops.bean.User;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.lzy.okgo.OkGo;
 import com.yanzhenjie.nohttp.NoHttp;
+import com.yanzhenjie.nohttp.cache.DBCacheStore;
 
 import java.util.logging.Level;
 
@@ -16,7 +17,7 @@ import java.util.logging.Level;
 public class AppApplication extends Application implements Constant {
 
     public static Context context;
-    public static boolean isHotStart = false;
+    public static boolean isHotRun = false;
 
     @Override
     public void onCreate() {

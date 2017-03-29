@@ -45,7 +45,7 @@ public class MainActivity extends HideSoftInputActivity {
 
         context = this;
 
-        AppApplication.isHotStart = true;
+        AppApplication.isHotRun = true;
 
         initTab();
 

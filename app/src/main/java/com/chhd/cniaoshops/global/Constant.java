@@ -16,7 +16,8 @@ public interface Constant {
 
     int TIME_OUT = 5 * 1000;
 
-    int delayMillis = 100;
+    int DELAYMILLIS_FOR_RQUEST_FINISH = 650;
+    int DELAYMILLIS_FOR_SHOW_EMPTY = 100;
 
     int BANNER_DESCRIPTION_LAYOUT_HEIGHT = 30;
 

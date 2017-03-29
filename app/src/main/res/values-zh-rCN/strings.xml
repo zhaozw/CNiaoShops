@@ -10,4 +10,5 @@
     <string name="no_more">暂无更多数据</string>
     <string name="no_to_more">没有更多数据</string>
     <string name="load_fail">加载失败</string>
+    <string name="please_waiting">请稍等...</string>
 </resources>

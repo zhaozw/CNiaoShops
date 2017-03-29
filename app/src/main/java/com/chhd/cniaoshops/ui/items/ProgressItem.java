@@ -8,6 +8,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.chhd.cniaoshops.R;
+import com.chhd.cniaoshops.ui.StatusEnum;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ import eu.davidea.viewholders.FlexibleViewHolder;
 
 public class ProgressItem extends AbstractFlexibleItem<ProgressItem.Holder> {
 
-    private StatusEnum status = StatusEnum.ON_LOAD;
+    private StatusEnum status = StatusEnum.ON_LOAD_MORE;
     private Context context;
     private FlexibleAdapter adapter;
     private View.OnClickListener onClickListener;
@@ -69,20 +70,20 @@ public class ProgressItem extends AbstractFlexibleItem<ProgressItem.Holder> {
     public void bindViewHolder(FlexibleAdapter adapter, Holder holder, int position, List payloads) {
 
         switch (status) {
-            case ON_LOAD:
+            case ON_LOAD_MORE:
                 holder.progressBar.setVisibility(View.VISIBLE);
                 holder.tvFail.setVisibility(View.INVISIBLE);
-                holder.tvNone.setVisibility(View.INVISIBLE);
+                holder.tvFinish.setVisibility(View.INVISIBLE);
                 break;
             case ON_FINISH:
                 holder.progressBar.setVisibility(View.INVISIBLE);
                 holder.tvFail.setVisibility(View.INVISIBLE);
-                holder.tvNone.setVisibility(View.VISIBLE);
+                holder.tvFinish.setVisibility(View.VISIBLE);
                 break;
             case ON_ERROR:
                 holder.progressBar.setVisibility(View.INVISIBLE);
                 holder.tvFail.setVisibility(View.VISIBLE);
-                holder.tvNone.setVisibility(View.INVISIBLE);
+                holder.tvFinish.setVisibility(View.INVISIBLE);
                 break;
         }
     }
@@ -93,8 +94,8 @@ public class ProgressItem extends AbstractFlexibleItem<ProgressItem.Holder> {
         ProgressBar progressBar;
         @BindView(R.id.tv_fail)
         TextView tvFail;
-        @BindView(R.id.tv_none)
-        TextView tvNone;
+        @BindView(R.id.tv_finish)
+        TextView tvFinish;
 
         public Holder(View view, FlexibleAdapter adapter) {
             super(view, adapter);
@@ -111,9 +112,4 @@ public class ProgressItem extends AbstractFlexibleItem<ProgressItem.Holder> {
         }
     }
 
-    public enum StatusEnum {
-        ON_LOAD,
-        ON_FINISH,
-        ON_ERROR
-    }
 }

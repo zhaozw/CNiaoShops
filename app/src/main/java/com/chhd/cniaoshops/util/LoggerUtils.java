@@ -68,6 +68,20 @@ public class LoggerUtils implements Constant {
         }
     }
 
+    public static void e(Throwable throwable, Response<?> response) {
+        if (isDebug) {
+            String message =
+                    "url:\t\t" + response.request().url()
+                            + "\n\n"
+                            + "params:\t" + response.request().getParamKeyValues().entrySet().toString().replace("[", "").replace("]", "").replace(", ", "\n" + "params:\t")
+                            + "\n\n"
+                            + "json:\t" + response.get()
+                            + "\n\n"
+                            + "error";
+            Logger.e(throwable, message);
+        }
+    }
+
     public static void e(String message) {
         if (isDebug) {
             Logger.e(message);

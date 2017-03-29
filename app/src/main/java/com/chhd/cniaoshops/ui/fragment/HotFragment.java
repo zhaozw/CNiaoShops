@@ -14,6 +14,7 @@ import com.chhd.cniaoshops.R;
 import com.chhd.cniaoshops.bean.Page;
 import com.chhd.cniaoshops.bean.Wares;
 import com.chhd.cniaoshops.http.OnResponse;
+import com.chhd.cniaoshops.ui.StatusEnum;
 import com.chhd.cniaoshops.ui.decoration.SpaceItemDecoration;
 import com.chhd.cniaoshops.ui.adapter.HotWaresAdapter;
 import com.chhd.cniaoshops.ui.base.BaseFragment;
@@ -60,7 +61,7 @@ public class HotFragment extends BaseFragment {
     private int curPage = 1;
     private int totalPage = 1;
     private int pageSize = 10;
-    private StatusEnum state = StatusEnum.STATE_NORMAL;
+    private StatusEnum state = StatusEnum.ON_NORMAL;
     private ProgressItem progressItem;
 
     @Nullable
@@ -93,7 +94,7 @@ public class HotFragment extends BaseFragment {
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            progressItem.setStatus(ProgressItem.StatusEnum.ON_LOAD);
+            progressItem.setStatus(StatusEnum.ON_LOAD_MORE);
             loadMoreData();
         }
     };
@@ -117,7 +118,7 @@ public class HotFragment extends BaseFragment {
 
         @Override
         public void onLoadMore(int lastPosition, int currentPage) {
-            progressItem.setStatus(ProgressItem.StatusEnum.ON_LOAD);
+            progressItem.setStatus(StatusEnum.ON_LOAD_MORE);
             loadMoreData();
         }
     };
@@ -143,12 +144,12 @@ public class HotFragment extends BaseFragment {
 
     private void refreshData() {
         curPage = 1;
-        state = StatusEnum.STATE_NORMAL;
+        state = StatusEnum.ON_NORMAL;
         requestGetData();
     }
 
     private void loadMoreData() {
-        state = StatusEnum.STATE_LOADMORE;
+        state = StatusEnum.ON_LOAD_MORE;
         requestGetData();
     }
 
@@ -156,8 +157,7 @@ public class HotFragment extends BaseFragment {
 
         String url = SERVER_URL + "wares/hot";
 
-        final Request<String> request = NoHttp.createStringRequest(url, RequestMethod.POST);
-
+        Request<String> request = NoHttp.createStringRequest(url, RequestMethod.POST);
         request.add("curPage", curPage);
         request.add("pageSize", pageSize);
 
@@ -165,9 +165,8 @@ public class HotFragment extends BaseFragment {
         queue.add(0, request, new OnResponse<String>() {
 
             @Override
-            public void onSuccess(int what, Response<String> response) {
+            public void succeed(int what, Response<String> response) {
                 try {
-
                     Type type = new TypeToken<Page<Wares>>() {
                     }.getType();
                     Page<Wares> page = new Gson().fromJson(response.get(), type);
@@ -180,19 +179,17 @@ public class HotFragment extends BaseFragment {
                     showData(page);
 
                 } catch (Exception e) {
-                    LoggerUtils.e(e);
+                    LoggerUtils.e(e, response);
                 }
             }
 
             @Override
-            public void onFail(int what, Response<String> response) {
-
+            public void failed(int what, Response<String> response) {
                 fail();
             }
 
             @Override
-            public void onFinish(int what) {
-                super.onFinish(what);
+            public void finish(int what) {
                 finishRefresh();
 
                 new Handler().postDelayed(new Runnable() {
@@ -201,8 +198,7 @@ public class HotFragment extends BaseFragment {
                         int visibility = items.size() == 0 ? View.VISIBLE : View.INVISIBLE;
                         emptyView.setVisibility(visibility);
                     }
-                }, delayMillis);
-
+                }, DELAYMILLIS_FOR_SHOW_EMPTY);
             }
         });
 
@@ -210,10 +206,10 @@ public class HotFragment extends BaseFragment {
 
     private void finishRefresh() {
         switch (state) {
-            case STATE_NORMAL:
+            case ON_NORMAL:
                 refreshLayout.finishRefresh();
                 break;
-            case STATE_LOADMORE:
+            case ON_LOAD_MORE:
                 refreshLayout.finishRefreshLoadMore();
                 break;
         }
@@ -222,14 +218,14 @@ public class HotFragment extends BaseFragment {
     private void fail() {
 
         switch (state) {
-            case STATE_NORMAL:
+            case ON_NORMAL:
 
                 break;
-            case STATE_LOADMORE:
+            case ON_LOAD_MORE:
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        progressItem.setStatus(ProgressItem.StatusEnum.ON_ERROR);
+                        progressItem.setStatus(StatusEnum.ON_ERROR);
                     }
                 }, 500);
                 break;
@@ -239,7 +235,7 @@ public class HotFragment extends BaseFragment {
 
     private void showData(Page<Wares> page) {
         switch (state) {
-            case STATE_NORMAL: {
+            case ON_NORMAL: {
                 items.clear();
                 for (Wares wares : page.getList()) {
                     HotWaresItem item = new HotWaresItem(getActivity(), wares);
@@ -248,7 +244,7 @@ public class HotFragment extends BaseFragment {
                 adatper.notifyDataSetChanged();
             }
             break;
-            case STATE_LOADMORE: {
+            case ON_LOAD_MORE: {
                 final List<AbstractFlexibleItem> newItems = new ArrayList<>();
                 for (Wares wares : page.getList()) {
                     HotWaresItem item = new HotWaresItem(getActivity(), wares);
@@ -259,7 +255,7 @@ public class HotFragment extends BaseFragment {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            progressItem.setStatus(ProgressItem.StatusEnum.ON_FINISH);
+                            progressItem.setStatus(StatusEnum.ON_FINISH);
                             adatper.onLoadMoreComplete(newItems, 2000);
                         }
                     }, 500);
@@ -278,7 +274,4 @@ public class HotFragment extends BaseFragment {
 
     }
 
-    enum StatusEnum {
-        STATE_NORMAL, STATE_LOADMORE
-    }
 }

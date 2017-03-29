@@ -26,7 +26,7 @@
             android:textSize="@dimen/text_size_small" />
 
         <TextView
-            android:id="@+id/tv_none"
+            android:id="@+id/tv_finish"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:gravity="center"
